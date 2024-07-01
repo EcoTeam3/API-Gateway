@@ -30,8 +30,8 @@ func (h *Handler) UpdateUser(ctx *gin.Context) {
         return
     }
 
-    if req.UserId == nil || req.UserId.UserId == "" {
-        req.UserId = &pb.UserId{UserId: id}
+    if req.UserId == "" {
+        req.UserId = id
     }
 
     resp, err := h.UserService.UpdateUser(ctx, &req)
@@ -80,8 +80,8 @@ func (h *Handler) UpdateUserProfile(ctx *gin.Context) {
         return
     }
 
-    if req.UserId == nil || req.UserId.UserId == "" {
-        req.UserId = &pb.UserId{UserId: id}
+    if req.UserId == "" {
+        req.UserId = id
     }
 
     resp, err := h.UserService.UpdateUserProfile(ctx, &req)
