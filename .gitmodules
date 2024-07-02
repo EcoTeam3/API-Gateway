@@ -1,0 +1,3 @@
+[submodule "ProtoFile"]
+	path = ProtoFile
+	url = git@github.com:EcoTeam3/ProtoFile.git
