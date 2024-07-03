@@ -1,13 +1,14 @@
 package handler
 
 import (
-	pb "api_gateway/genproto/userService"
+	pb "api_gateway/generated/user"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 func (h *Handler) GetUser(ctx *gin.Context) {
+    
 	id := ctx.Param("id")
 
 	req := pb.UserId{UserId: id}
