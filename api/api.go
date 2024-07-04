@@ -21,6 +21,9 @@ func NewRouter(conn *grpc.ClientConn) *gin.Engine {
 	user.PUT("/update/:id", handler.UpdateUser)
 	user.DELETE("/delete/:id", handler.GetUser)
 
+	community := router.Group("/community")
+	community.POST("/createGroup", handler.CreateGroup)
+
 
 
 	userprofile := router.Group("/userprofile")
