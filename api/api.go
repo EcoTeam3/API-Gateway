@@ -19,25 +19,38 @@ func NewRouter(conn *grpc.ClientConn) *gin.Engine {
 	ImpactCalculator := impact.NewImpactClient(conn)
 
 	st := handler.Handler{UserService: userService, Community: communityService, HabitTracker: habitTracker, ImpactCalculator: ImpactCalculator}
-	
-	user := router.Group("/user")
+	// Register and Login endpoints
+	router.POST("/register", st.Register)
+	router.POST("/login", st.Login)
+
+	// Protected routes with JWT middleware
+	user := router.Group("/user").Use(st.ValidateJWT())
 	user.GET("/get/:id", st.GetUser)
 	user.PUT("/update/:id", st.UpdateUser)
 	user.DELETE("/delete/:id", st.GetUser)
 
-	userprofile := router.Group("/userprofile")
+	userprofile := router.Group("/userprofile").Use(st.ValidateJWT())
 	userprofile.GET("/get/:id", st.GetUserProfile)
 	userprofile.PUT("/update/:id", st.UpdateUserProfile)
 
-	community := router.Group("/community")
+	community := router.Group("/community").Use(st.ValidateJWT())
 	community.POST("/create", st.CreateGroup)
-	community.GET("/get/:id", st.GetGroup)
-	community.PUT("/update/:id", st.UpdateGroup)
-	community.DELETE("/delete/:id", st.DeleteGroup)
-	community.GET("/get", st.GetAllGroups)
-	community.POST("/")
+	community.GET("/get/:groupId", st.GetGroup)
+	community.PUT("/update/:groupId", st.UpdateGroup)
+	community.DELETE("/delete/:groupId", st.DeleteGroup)
+	community.GET("/getAll", st.GetAllGroups)
+	community.POST("/joinGroup/:groupId/:userId", st.JoinGroupUser)
+	community.PUT("/leaveGroup/:groupId/:userId", st.LeaveGroupUser)
+	community.PUT("/updateRole", st.UpdateGroupMember)
+	community.POST("/createPost", st.CreatePost)
+	community.PUT("/updatePost/:postId", st.UpdatePost)
+	community.GET("/getPost/:postId", st.GetPost)
+	community.DELETE("/deletePost/:postId", st.DeletePost)
+	community.GET("/getGroupPost/:groupId/:postId", st.GetGroupPost)
+	community.POST("/createPostComment", st.CreatePostComment)
+	community.GET("/getPostComment/:postId/:commentId", st.GetPostComment)
 
-	impact := router.Group("/impactCalculator")
+	impact := router.Group("/impactCalculator").Use(st.ValidateJWT())
 	impact.POST("/create", st.CreateFootprint)
 	impact.GET("/get/userImpact/:id", st.GetUserImpact)
 	impact.GET("/get/groupImpact/:id", st.GetGroupImpact)
@@ -46,7 +59,7 @@ func NewRouter(conn *grpc.ClientConn) *gin.Engine {
 	impact.POST("/createDonation", st.CreateDonation)
 	impact.GET("/getDonation/:cause", st.GetDonations)
 
-	habit := router.Group("/habit")
+	habit := router.Group("/habit").Use(st.ValidateJWT())
 	habit.POST("/create", st.CreateHabit)
 	habit.GET("/get/habit/:id", st.GetHabit)
 	habit.PUT("/update", st.UpdateHabit)
