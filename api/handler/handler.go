@@ -8,8 +8,8 @@ import (
 )
 
 type Handler struct {
-	UserService user.UserServiceClient
-	Community community.CommunityServiceClient
-	HabitTracker habit.HabitTrackerClient
+	UserService      user.UserServiceClient
+	Community        community.CommunityServiceClient
+	HabitTracker     habit.HabitTrackerClient
 	ImpactCalculator impact.ImpactClient
 }
