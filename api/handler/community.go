@@ -36,12 +36,13 @@ func (h *Handler) GetGroup(c *gin.Context) {
 
 func (h *Handler) UpdateGroup(c *gin.Context) {
 	groupId := c.Param("groupId")
-	group := &community.Group{GroupId: groupId}
+	group := &community.Group{}
 	err := c.ShouldBindJSON(group)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
+	group = &community.Group{GroupId: groupId}
 	ctx, canccel := context.WithTimeout(context.Background(), time.Second)
 	defer canccel()
 	resp, err := h.Community.UpdateGroup(ctx, group)
@@ -128,6 +129,86 @@ func(h *Handler) CreatePost(c *gin.Context){
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 	resp, err := h.Community.CreatePost(ctx, post)
+	if err != nil{
+		c.JSON(http.StatusBadRequest, err)
+		return
+	}
+	c.JSON(http.StatusOK, resp)
+}
+
+
+func(h *Handler) UpdatePost(c *gin.Context){
+	post := &community.Post{}
+	err := c.ShouldBindJSON(post)
+	if err != nil{
+		c.JSON(http.StatusBadRequest, err)
+		return
+	}
+	post = &community.Post{PostId: c.Param("postId")}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	resp, err := h.Community.UpdatePost(ctx, post)
+	if err != nil{
+		c.JSON(http.StatusBadRequest, err)
+		return
+	}
+	c.JSON(http.StatusOK, resp)
+}
+
+func(h *Handler) DeletePost(c *gin.Context){
+	postId := c.Param("postId")
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	resp, err := h.Community.DeletePost(ctx, &community.PostId{PostId: postId})
+	if err != nil{
+		c.JSON(http.StatusBadRequest, err)
+		return
+	}
+	c.JSON(http.StatusOK, resp)
+}
+
+func(h *Handler) GetPost(c *gin.Context){
+	postId := c.Param("postId")
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	resp, err := h.Community.GetPost(ctx, &community.PostId{PostId: postId})
+	if err != nil{
+		c.JSON(http.StatusBadRequest, err)
+		return
+	}
+	c.JSON(http.StatusOK, resp)
+}
+
+func(h *Handler) GetGroupPost(c *gin.Context){
+	ids := &community.GroupPost{GroupId: c.Param("groupId"), 
+			PostId: c.Param("postId"),}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	resp, err := h.Community.GetGroupPost(ctx, ids)
+	if err != nil{
+		c.JSON(http.StatusBadRequest, err)
+		return
+	}
+	c.JSON(http.StatusOK, resp)
+}
+
+func(h *Handler) CreatePostComment(c *gin.Context){
+	comment := &community.Comment{}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	resp, err := h.Community.CreatePostComments(ctx, comment)
+	if err != nil{
+		c.JSON(http.StatusBadRequest, err)
+		return
+	}
+	c.JSON(http.StatusOK, resp)
+}
+
+func(h *Handler) GetPostComment(c *gin.Context){
+	ids := &community.PostComment{PostId: c.Param("postId"), CommentId: c.Param("commentId")}
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	resp, err := h.Community.GetPostComments(ctx, ids)
 	if err != nil{
 		c.JSON(http.StatusBadRequest, err)
 		return
