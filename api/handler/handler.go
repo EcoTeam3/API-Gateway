@@ -1,11 +1,15 @@
 package handler
 
-import "api_gateway/genproto/userService"
+import (
+	"api_gateway/generated/community"
+	"api_gateway/generated/user"
+)
 
 type Handler struct {
-	UserService userService.UserServiceClient
+	UserService user.UserServiceClient
+	Community community.CommunityServiceClient
 }
 
-func NewHandler(UserService userService.UserServiceClient) *Handler {
+func NewHandler(UserService user.UserServiceClient) *Handler {
 	return &Handler{UserService: UserService}
 }

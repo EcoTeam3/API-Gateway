@@ -2,7 +2,7 @@ package api
 
 import (
 	"api_gateway/api/handler"
-	"api_gateway/genproto/userService"
+	pb "api_gateway/generated/user"
 
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
@@ -11,14 +11,18 @@ import (
 func NewRouter(conn *grpc.ClientConn) *gin.Engine {
 	router := gin.Default()
 
-	userService := userService.NewUserServiceClient(conn)
+	userService := pb.NewUserServiceClient(conn)
 
 	handler := handler.NewHandler(userService)
 
 	user := router.Group("/user")
+	user.POST("/registration", handler.Registration)
 	user.GET("/get/:id", handler.GetUser)
 	user.PUT("/update/:id", handler.UpdateUser)
 	user.DELETE("/delete/:id", handler.GetUser)
+
+	community := router.Group("/community")
+	community.POST("/createGroup", handler.CreateGroup)
 
 
 
